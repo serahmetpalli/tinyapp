@@ -24,6 +24,22 @@ function getUsers(user_id) {
   return users[user_id];
 }
 
+// You have a user database(Obj) {user1:{id1, email1, PW1}, user2:{id2, email2, PW2}}
+// You are given a email 
+// You want to check which item in user database has that particular email
+// For.....of(Arrays) ? For....in(Objects) ?  << what's the difference
+// Need to get the email value from the key to do compare
+// 
+
+
+function checkEmail (users, email){
+  for (key in users){
+    if (email === users.key.email){
+      res.status(400).send("Registration failed. Email already exists.");
+    }
+  }
+}
+
 function generateRandomString() {
  return Math.random().toString(36).substr(2, 6);
  }
@@ -126,19 +142,26 @@ app.get("/register", (req, res) => {
 //adding user object to global users object
 app.post("/register", (req, res) => {
   const user_id = generateRandomString();
-  users[user_id]={id:user_id, email:req.body.email, password:req.body.password}; 
-  res.cookie('user_id', user_id);
-  res.redirect("/urls");  
+  // console.log(req.body);
+  if (!req.body.email || !req.body.password) {
+    // console.log('user_id:',user_id);
+    res.status(400).send("Registration failed. Email and/or Password fields cannot be empty.");
+  } else {
+    users[user_id]={id:user_id, email:req.body.email, password:req.body.password}; 
+    res.cookie('user_id', user_id);
+    res.redirect("/urls");  
+  }
+  let email = req.body.email;
+  checkEmail(users, email);
+  // if (req.body.email === users)function checkEmail (users, email){
+  //     for (key in users){
+  //       if (email === users.key.email){
+  //         res.status(400).send("Registration failed. Email already exists.");
+  //       }
+  //     }
+  //   }
 
-//   if ( user_id.email === "" || user_id.password === "") {
-//     console.log(user_id);
-//     res.status(400).send("Email/password fields are blank!");
-//   } 
-
-//   if (Object.arguments())
-
-// });
-
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);

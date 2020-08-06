@@ -18,6 +18,12 @@ const users = {
 }
 }
 
+function getUsers(user_id) {
+  // console.log("user_id:",user_id);
+  // console.log("users:", users); 
+  return users[user_id];
+}
+
 function generateRandomString() {
  return Math.random().toString(36).substr(2, 6);
  }
@@ -37,10 +43,6 @@ app.get("/",(req,res)=> {
   res.send("Hello!");
 });
 
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
-});
-
 app.get("/urls.json", (req,res)=> {
   res.json(urlDatabase);
 });
@@ -51,18 +53,22 @@ app.get("/hello", (req,res) => {
 
 app.get("/urls", (req,res) => {
   console.log(req.cookies);
-  const templateVars = { urls: urlDatabase, username: req.cookies["username"]};
+  const user = getUsers(req.cookies["user_id"]);
+  const templateVars = { urls: urlDatabase, user:user};
+  console.log('users:',users);
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = {username: req.cookies["username"]};
+  const user = getUsers(req.cookies["user_id"]);
+  const templateVars = {user:user};
   res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
-  const templateVars = { username: req.cookies["username"], shortURL, longURL: urlDatabase[shortURL] };
+  const user = getUsers(req.cookies["user_id"]);
+  const templateVars = { user:user, shortURL, longURL: urlDatabase[shortURL] };
   res.render("urls_show", templateVars);
 });
 
@@ -114,23 +120,26 @@ app.post("/logout", (req,res) => {
 });
 
 app.get("/register", (req, res) => {
-  res.render("register",{username:null});
+  res.render("register",{user:null});
 });
 
 //adding user object to global users object
 app.post("/register", (req, res) => {
   const user_id = generateRandomString();
-  // console.log(user_id);
   users[user_id]={id:user_id, email:req.body.email, password:req.body.password}; 
-  // console.log('reqbody:',req.body);
-  // console.log('users:',users);
   res.cookie('user_id', user_id);
   res.redirect("/urls");  
-});
 
-//setting cookie containing user's newly generated id
-// app.post("/user_id", (req,res) => {
-//   console.log(req.body);
-//   res.cookie('user_id', req.body.user_id)
-//   res.redirect("/urls");
+//   if ( user_id.email === "" || user_id.password === "") {
+//     console.log(user_id);
+//     res.status(400).send("Email/password fields are blank!");
+//   } 
+
+//   if (Object.arguments())
+
 // });
+
+
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
+});

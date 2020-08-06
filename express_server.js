@@ -5,7 +5,7 @@ app.use(cookieParser());
 
 const PORT = 8080; //default port 8080
 
-const user = {
+const users = {
   "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
@@ -113,23 +113,24 @@ app.post("/logout", (req,res) => {
   res.redirect("/urls");
 });
 
-app.post("/login", (req,res) => {
-  console.log(req.body);
-  res.cookie('username', req.body.username)
-  res.redirect("/urls");
-});
-
-app.post("/logout", (req,res) => {
-  console.log(req.body);
-  res.clearCookie("username");
-  res.redirect("/urls");
-});
-
 app.get("/register", (req, res) => {
   res.render("register",{username:null});
 });
 
+//adding user object to global users object
 app.post("/register", (req, res) => {
-  // const templateVars;
-  res.render("register",{username:null});
+  const user_id = generateRandomString();
+  // console.log(user_id);
+  users[user_id]={id:user_id, email:req.body.email, password:req.body.password}; 
+  // console.log('reqbody:',req.body);
+  // console.log('users:',users);
+  res.cookie('user_id', user_id);
+  res.redirect("/urls");  
 });
+
+//setting cookie containing user's newly generated id
+// app.post("/user_id", (req,res) => {
+//   console.log(req.body);
+//   res.cookie('user_id', req.body.user_id)
+//   res.redirect("/urls");
+// });

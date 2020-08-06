@@ -5,6 +5,19 @@ app.use(cookieParser());
 
 const PORT = 8080; //default port 8080
 
+const user = {
+  "userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+"user2RandomID":{
+  id: "user2RandomID",
+  email: "user2@example.com",
+  password:"dishwasher-funk"
+}
+}
+
 function generateRandomString() {
  return Math.random().toString(36).substr(2, 6);
  }
@@ -49,15 +62,16 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
-  const templateVars = { shortURL, longURL: urlDatabase[shortURL] };
+  const templateVars = { username: req.cookies["username"], shortURL, longURL: urlDatabase[shortURL] };
   res.render("urls_show", templateVars);
 });
 
-app.post("/urls", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
+app.post("/urls/new", (req, res) => {
+  console.log(req.body);  // 
   const key = generateRandomString();
   urlDatabase[key]=req.body.longURL;
-  res.redirect(`/urls/${key}`);         // Respond with 'Ok' (we will replace this)
+  res.redirect(`/urls/${key}`);    
+  // res.redirect("/urls");       
 });
 
 app.get("/u/:shortURL", (req, res) => {
@@ -99,5 +113,23 @@ app.post("/logout", (req,res) => {
   res.redirect("/urls");
 });
 
+app.post("/login", (req,res) => {
+  console.log(req.body);
+  res.cookie('username', req.body.username)
+  res.redirect("/urls");
+});
 
+app.post("/logout", (req,res) => {
+  console.log(req.body);
+  res.clearCookie("username");
+  res.redirect("/urls");
+});
 
+app.get("/register", (req, res) => {
+  res.render("register",{username:null});
+});
+
+app.post("/register", (req, res) => {
+  // const templateVars;
+  res.render("register",{username:null});
+});

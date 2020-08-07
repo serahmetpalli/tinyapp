@@ -114,9 +114,16 @@ app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   console.log("shorturl:",shortURL);
   const user = getUsers(req.cookies["user_id"]);
-  const templateVars = { user:user, shortURL:shortURL, longURL:urlDatabase[shortURL]["longURL"] };
+  const templateVars = { user:user, shortURL:shortURL, longURL:urlDatabase[shortURL].longURL };
   console.log("templateVars:",templateVars);
-  res.render("urls_show", templateVars);
+  // const user = req.cookies["user_id"];
+
+  if (user) {
+    res.render("urls_show", templateVars);
+  } else {
+    res.status(401).send("Unauthorized. Please login first before trying to access this page.");
+  }
+  
 });
 
 app.post("/urls/new", (req, res) => {
@@ -140,14 +147,33 @@ app.get("/u/:shortURL", (req, res) => {
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   console.log(req.body);
-  delete urlDatabase[req.params.shortURL];
+  
+  const userid = req.cookies["user_id"];
+  const shortURL = req.params.shortURL;
+  const obj = urlDatabase[shortURL];
+
+  if (obj !== userid) {
+    res.status(401).send("Unauthorized. Please login first before trying to access this page.");
+    return; 
+  } 
+
+  delete urlDatabase[shortURL];
   res.redirect("/urls");
+  
 });
 
-app.post("/urls/:id", (req, res) => {
+app.post("/urls/:shortURL", (req, res) => {
   console.log(req.body);
-  urlDatabase[req.params.id] = {longURL: req.body.longURL, userID: req.cookies["user_id"]};
-  res.redirect("/urls");
+  const user = req.cookies["user_id"];
+  const shortURL = req.params.shortURL;
+  const templateVars = { user:user, shortURL:shortURL, longURL:urlDatabase[shortURL].longURL };
+
+  if (user) {
+    const longUrl = urlDatabase[shortURL].longURL;
+    res.redirect("/urls");
+  } else {
+    res.status(401).send("Unauthorized. Please login first before trying to access this page.");
+  }
 });
 
 app.post("/logout", (req, res) => {

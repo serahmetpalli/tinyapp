@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+  integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+  <title>Login</title>
+</head>
+<body>
+  <%- include('partials/_header') %>
+  <main style="margin: 1em;">
+    <h4> Login </h4>
+    <form class="" action="/login" method="POST">
+      <div class="form-group mb-2">
+        <label for="Email">E-mail ID</label>
+        <input class="form-control" type="email" name="email" placeholder="someone@example.com" style="width: 300px; margin: 1em">
+      </div>
+        <div class="form-group">
+          <label for="Password">Password</label>
+          <input class="form-control" type="password" name="password" style="width: 300px; margin: 1em">
+          <button type="submit" class="btn btn-primary">Sign-in</button>
+        </div>
+        <!-- <button type="submit" class="btn btn-primary">E-mail</button> -->
+    </form>
+  </main>
+
+</body>
+</html>

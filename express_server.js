@@ -37,6 +37,9 @@ const urlDatabase = {
   "9sm5xk": { longURL: "http://www.google.com", userID: "userRandomID" }
 };
 
+
+//GET REQUESTS 
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -87,18 +90,10 @@ app.get("/urls/:shortURL", (req, res) => {
 
 });
 
-app.post("/urls/new", (req, res) => {
-  const key = generateRandomString();
-  urlDatabase[key] = { longURL: req.body.longURL, userID: req.session["user_id"] };
-  console.log('urlDatabase:', urlDatabase);
-  res.redirect(`/urls/${key}`);
-
-});
-
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL]["longURL"];
-
+  
   if (!longURL) {
     res.status(404).send();
   } else {
@@ -106,21 +101,40 @@ app.get("/u/:shortURL", (req, res) => {
   }
 });
 
+app.get("/register", (req, res) => {
+  res.render("register", { user: null });
+});
+
+app.get("/login", (req, res) => {
+  res.render("loginForm", { user: null });
+});
+
+
+//POST REQUESTS
+
 app.post("/urls/:shortURL/delete", (req, res) => {
   console.log(req.body);
-
+  
   const userid = req.session["user_id"];
   const shortURL = req.params.shortURL;
   const obj = urlDatabase[shortURL];
-
+  
   if (obj.userID !== userid) {
     res.status(401).send("Unauthorized. Please login first before trying to access this page.");
     return;
   }
-
+  
   delete urlDatabase[shortURL];
   res.redirect("/urls");
+  
+});
 
+app.post("/urls/new", (req, res) => {
+  const key = generateRandomString();
+  urlDatabase[key] = { longURL: req.body.longURL, userID: req.session["user_id"] };
+  console.log('urlDatabase:', urlDatabase);
+  res.redirect(`/urls/${key}`);
+  
 });
 
 app.post("/urls/:shortURL", (req, res) => {
@@ -142,9 +156,6 @@ app.post("/logout", (req, res) => {
   res.redirect("/login");
 });
 
-app.get("/register", (req, res) => {
-  res.render("register", { user: null });
-});
 
 //adding user object to global users object
 app.post("/register", (req, res) => {
@@ -182,10 +193,6 @@ app.post("/login", (req, res) => {
     req.session['user_id'] = userExists;
     res.redirect("/urls");
   }
-});
-
-app.get("/login", (req, res) => {
-  res.render("loginForm", { user: null });
 });
 
 app.listen(PORT, () => {

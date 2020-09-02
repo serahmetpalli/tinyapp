@@ -1,14 +1,3 @@
-// function getUserByEmail(email,users) {
-//   for (key in users) {
-//     if (email === users[key].email) {
-//       console.log(users[key]);
-//       return users[key];
-//     } else {
-//       return {};
-//     }
-//   }
-// }
-
 function checkEmail(email, users) {
   for (key in users) {
     if (email === users[key].email) {

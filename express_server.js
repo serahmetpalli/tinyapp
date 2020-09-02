@@ -5,7 +5,6 @@ const {
   generateRandomString,
   urlsForUser,
 } = require("./helpers"); //reference the check email func
-// const cookieParser = require('cookie-parser');
 const cookieSession = require("cookie-session");
 
 const app = express();
@@ -88,6 +87,8 @@ app.get("/urls/:shortURL", (req, res) => {
   }
 });
 
+//cannot go to urls page without logging in.
+
 app.post("/urls/:shortURL", (req, res) => {
   const user = getUsers(req.session["user_id"], users);
 
@@ -115,6 +116,8 @@ app.get("/u/:shortURL", (req, res) => {
   }
 });
 
+// only correct users can delete their own links.
+
 app.post("/urls/:shortURL/delete", (req, res) => {
   // console.log(req.body);
 
@@ -139,6 +142,8 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   res.redirect("/urls");
 });
 
+//User has to first login before trying to access the page, else error message shows up.
+
 app.get("/urls", (req, res) => {
   const user = getUsers(req.session["user_id"], users);
   // console.log('user:', user);
@@ -160,7 +165,8 @@ app.get("/register", (req, res) => {
   res.render("register", {user: null});
 });
 
-//adding user object to global users object
+//adding user object to global users object - if fields are empty, show error message.
+
 app.post("/register", (req, res) => {
   const user_id = generateRandomString();
   const {email, password} = req.body;
@@ -188,6 +194,8 @@ app.get("/login", (req, res) => {
   res.render("loginForm", {user: null});
 });
 
+//go to login page if user exists, if not show error message.
+
 app.post("/login", (req, res) => {
   // console.log(req.body.email);
   // console.log(req.body.password);
@@ -207,6 +215,8 @@ app.post("/login", (req, res) => {
   }
 });
 
+//logout from the session
+
 app.post("/logout", (req, res) => {
   req.session.user_id = null;
   console.log("session", req.session);
@@ -220,6 +230,8 @@ app.get("/urls.json", (req, res) => {
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
+
+//go to urls page if logged in, else go to login page.
 
 app.get("/", (req, res) => {
   if (req.session["user_id"]) {

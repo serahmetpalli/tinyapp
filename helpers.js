@@ -25,7 +25,7 @@ function generateRandomString() {
   return Math.random().toString(36).substr(2, 6);
 }
 
-function urlsForUser(id,urlDatabase) {
+function urlsForUser(id, urlDatabase) {
   const filteredUrl = {};
 
   for (let shortUrl in urlDatabase) {
